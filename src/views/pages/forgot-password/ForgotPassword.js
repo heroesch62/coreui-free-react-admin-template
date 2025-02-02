@@ -26,16 +26,19 @@ const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Fetch roles when component mounts
     const fetchRoles = async () => {
       try {
-        const response = await fetch('/api/roles')
+        const response = await fetch('https://localhost:7037/api/Roles')
         if (response.ok) {
           const data = await response.json()
           setRoles(data)
         }
       } catch (error) {
         console.error('Error fetching roles:', error)
+        setStatus({
+          type: 'danger',
+          message: 'Failed to load roles. Please refresh the page.',
+        })
       }
     }
 
@@ -48,30 +51,29 @@ const ForgotPassword = () => {
     setStatus({ type: '', message: '' })
 
     try {
-      const response = await fetch('/api/users/forgot-password', {
+      const response = await fetch('https://localhost:7037/api/Users/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, roleId }),
+        body: JSON.stringify({
+          email,
+          roleId: parseInt(roleId, 10), // Ensure roleId is sent as a number
+        }),
       })
 
       const data = await response.json()
 
-      if (response.ok) {
-        setStatus({
-          type: 'success',
-          message: 'Password reset instructions have been sent to your email.',
-        })
-        setEmail('')
-        setRoleId('')
-      } else {
-        setStatus({
-          type: 'danger',
-          message: data.message || 'Failed to process request',
-        })
-      }
+      // Always show success message to prevent email enumeration
+      setStatus({
+        type: 'success',
+        message:
+          'If your email and role match our records, you will receive password reset instructions.',
+      })
+      setEmail('')
+      setRoleId('')
     } catch (error) {
+      console.error('Error:', error)
       setStatus({
         type: 'danger',
         message: 'An error occurred. Please try again later.',
@@ -82,7 +84,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
+    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
           <CCol md={8}>
@@ -90,11 +92,15 @@ const ForgotPassword = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <h1>Forgot Password</h1>
-                  <p className="text-medium-emphasis">
+                  <p className="text-body-secondary">
                     Enter your role and email address to receive password reset instructions
                   </p>
                   <CForm onSubmit={handleSubmit}>
-                    {status.message && <CAlert color={status.type}>{status.message}</CAlert>}
+                    {status.message && (
+                      <CAlert color={status.type} className="mb-3">
+                        {status.message}
+                      </CAlert>
+                    )}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilPeople} />
@@ -103,6 +109,7 @@ const ForgotPassword = () => {
                         value={roleId}
                         onChange={(e) => setRoleId(e.target.value)}
                         required
+                        disabled={isLoading}
                       >
                         <option value="">Select Role</option>
                         {roles.map((role) => (
@@ -122,6 +129,7 @@ const ForgotPassword = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={isLoading}
                       />
                     </CInputGroup>
                     <CRow>
@@ -135,7 +143,7 @@ const ForgotPassword = () => {
                           {isLoading ? 'Sending...' : 'Send Reset Link'}
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
+                      <CCol xs={6} className="text-end">
                         <Link to="/login">
                           <CButton color="link" className="px-0">
                             Back to Login
@@ -144,6 +152,17 @@ const ForgotPassword = () => {
                       </CCol>
                     </CRow>
                   </CForm>
+                </CCardBody>
+              </CCard>
+              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
+                <CCardBody className="text-center">
+                  <div>
+                    <h2>HR2 System</h2>
+                    <p>
+                      Password reset is easy. Just tell us your role and email address, and we will
+                      send you instructions to reset your password.
+                    </p>
+                  </div>
                 </CCardBody>
               </CCard>
             </CCardGroup>

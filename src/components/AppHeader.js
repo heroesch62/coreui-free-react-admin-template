@@ -15,12 +15,21 @@ import CIcon from '@coreui/icons-react'
 import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
-import AppHeaderDropdown from './header/AppHeaderDropdown' // Changed this line
+import AppHeaderDropdown from './header/AppHeaderDropdown'
 
 const AppHeader = () => {
   const headerRef = useRef()
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const [userInfo, setUserInfo] = React.useState(null)
+
+  useEffect(() => {
+    // Get user info from localStorage
+    const user = JSON.parse(localStorage.getItem('user'))
+    if (user) {
+      setUserInfo(user)
+    }
+  }, [])
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -63,6 +72,13 @@ const AppHeader = () => {
               <CIcon icon={cilEnvelopeOpen} size="lg" />
             </CNavLink>
           </CNavItem>
+          {userInfo && (
+            <CNavItem className="d-flex align-items-center mx-3">
+              <span className="text-body">
+                {`${userInfo.lastName}, ${userInfo.firstName} - ${userInfo.roleName}`}
+              </span>
+            </CNavItem>
+          )}
         </CHeaderNav>
         <CHeaderNav className="ms-3">
           <AppHeaderDropdown />

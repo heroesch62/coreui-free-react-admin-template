@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -46,7 +46,20 @@ const Login = () => {
       }
 
       const data = await response.json()
-      localStorage.setItem('user', JSON.stringify(data))
+
+      // Format user data for storage
+      const userInfo = {
+        id: data.id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userName: data.userName,
+        roleName: data.roleName,
+        email: data.email,
+        token: data.token, // if your API returns a token
+      }
+
+      // Store formatted user data
+      localStorage.setItem('user', JSON.stringify(userInfo))
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)
@@ -105,9 +118,11 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
-                        </CButton>
+                        <Link to="/forgot-password">
+                          <CButton color="link" className="px-0">
+                            Forgot password?
+                          </CButton>
+                        </Link>
                       </CCol>
                     </CRow>
                   </CForm>
