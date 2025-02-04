@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -13,6 +13,10 @@ import {
   CInputGroupText,
   CRow,
   CAlert,
+  CToast,
+  CToastBody,
+  CToaster,
+  CToastHeader,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
@@ -22,7 +26,29 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [toast, setToast] = useState(null)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Handle toast on component mount
+  useEffect(() => {
+    if (location.state?.showToast) {
+      setToast(
+        <CToast
+          autohide={true}
+          delay={5000}
+          className="bg-success text-white"
+        >
+          <CToastHeader closeButton={false} className="bg-success text-white border-0">
+            <span className="fw-bold">Success</span>
+          </CToastHeader>
+          <CToastBody>{location.state.message}</CToastBody>
+        </CToast>
+      )
+      // Clear the location state
+      window.history.replaceState({}, document.title)
+    }
+  }, [location])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -55,10 +81,9 @@ const Login = () => {
         userName: data.userName,
         roleName: data.roleName,
         email: data.email,
-        token: data.token, // if your API returns a token
+        token: data.token,
       }
 
-      // Store formatted user data
       localStorage.setItem('user', JSON.stringify(userInfo))
       navigate('/dashboard')
     } catch (err) {
@@ -69,7 +94,7 @@ const Login = () => {
   }
 
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center position-relative">
       <CContainer>
         <CRow className="justify-content-center">
           <CCol md={8}>
@@ -143,8 +168,21 @@ const Login = () => {
           </CCol>
         </CRow>
       </CContainer>
+
+      {/* Centered Toast container */}
+      <CToaster
+        placement="top-center"
+        push={toast}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      />
     </div>
   )
 }
 
 export default Login
+

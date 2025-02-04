@@ -10,9 +10,10 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
-const ForgotPassword = React.lazy(() => import('./views/pages/forgot-password/ForgotPassword'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
+const ForgotPassword = React.lazy(() => import('./views/pages/forgot-password/ForgotPassword'))
+const ResetPassword = React.lazy(() => import('./views/pages/reset-password/ResetPassword'))
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -50,6 +51,7 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/404" element={<Page404 />} />
           <Route path="/500" element={<Page500 />} />
           <Route

@@ -16,7 +16,7 @@ import {
   CAlert,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilEnvelope, cilPeople } from '@coreui/icons'
+import { cilAt, cilPeople } from '@coreui/icons' // Changed cilEnvelope to cilAt
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
         },
         body: JSON.stringify({
           email,
-          roleId: parseInt(roleId, 10), // Ensure roleId is sent as a number
+          roleId: parseInt(roleId, 10),
         }),
       })
 
@@ -121,7 +121,7 @@ const ForgotPassword = () => {
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
-                        <CIcon icon={cilEnvelope} />
+                        <CIcon icon={cilAt} />
                       </CInputGroupText>
                       <CFormInput
                         type="email"
